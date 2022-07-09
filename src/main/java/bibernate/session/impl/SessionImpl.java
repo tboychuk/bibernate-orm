@@ -1,11 +1,13 @@
 package bibernate.session.impl;
 
+import bibernate.annotation.Column;
 import bibernate.session.Session;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class SessionImpl implements Session {
@@ -24,10 +26,18 @@ public class SessionImpl implements Session {
         }
     }
 
+    @SneakyThrows
     private <T> T createEntityFromResultSet(Class<T> entityType, ResultSet resultSet) {
-        // todo: 1. create entity instance
-        // todo: 2. for each field -> find a corresponding column value in the result set
-        // todo: 3. set field value
-        // todo: 4. return entity
+        var constructor = entityType.getConstructor();
+        var entity = constructor.newInstance();
+        for (var field : entityType.getDeclaredFields()) {
+            var columnName = Optional.ofNullable(field.getAnnotation(Column.class))
+                    .map(Column::value)
+                    .orElse(field.getName());
+            var columnValue = resultSet.getObject(columnName);
+            field.setAccessible(true);
+            field.set(entity, columnValue);
+        }
+        return entity;
     }
 }

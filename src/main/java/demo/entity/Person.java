@@ -8,7 +8,7 @@ public class Person {
 
     private Long id;
 
-    @Column("fist_name")
+    @Column("first_name")
     private String firstName;
 
     @Column("last_name")
