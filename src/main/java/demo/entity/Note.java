@@ -6,14 +6,10 @@ import bibernate.annotation.Table;
 import lombok.Data;
 
 @Data
-@Table("persons")
-public class Person {
+@Table("notes")
+public class Note {
     @Id
     private Long id;
-
-    @Column("first_name")
-    private String firstName;
-
-    @Column("last_name")
-    private String lastName;
+    
+    private String body;
 }
